@@ -1,0 +1,21 @@
+@font-face {
+  font-family:"Arcade";
+  src: url("../static/arcade1.ttf") ;
+}
+
+body{
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  background-attachment: fixed;
+}
+
+
+.page-wrap {
+  font-family: 'Arcade', sans-serif;
+  width: 90%;
+  max-width: 960px;
+  margin: 0px auto;
+  position: relative;
+  background-color: black;
+}

@@ -1,0 +1,11 @@
+{
+  "name": "tetris",
+  "version": "0.0.1",
+  "ignore": [],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "components-bootstrap": "~3.3.6",
+    "jquery": "~2.1.4",
+    "angular-bootstrap": "~0.14.3"
+  }
+}
