@@ -1,6 +1,6 @@
 // Config object that holds the various configuration details...
 var Config = {
-  moveIntervalTime: 300, // move piece down every 300ms
+  moveIntervalTime: 10, // move piece down every 300ms
   coordOptions: [
       // square block
         [
@@ -35,60 +35,73 @@ var Config = {
       ]
 };
 
-// kind of observer pattern for notifying observers when a certain event occurs...
-class EventEmitter{
-  constructor(){
-    this._emitters = new Map();
-  }
-  emit(channel, data){
-    if(!this._emitters.has(channel)) return console.log('Nobody Lisetening, silently ignoring...', channel, data);
-    this._emitters.get(channel).forEach(fn => fn(data));
-  }
-  addListener(channel, listener){
-    if(!this._emitters.has(channel))  this._emitters.set(channel, []);
-    this._emitters.get(channel).push(listener);
-  }
-  removeListeners(channel){
-    this._emitters.delete(channel);
-  }
-}
+// the mini helper functions encapsulated in Utils object
+var Utils = (function(){
 
-// for holding previous states to return to when new state doesn't work out.
-class Memento{
-  constructor(maxStates=10){
-    this.states = [];
-    this.maxStates = maxStates;
+  // method that return random number, with ceil+1 passed as 'max' parameter
+  function getRandom(max) {
+    if(!max)  throw new Error('Param Missing');
+    let num = Math.round(max*Math.random()-.5);
+    if(num==max)  num--;
+    return num;
   }
-  getState(steps=1){
-    let state;
-    while(steps && this.states.length){
-      steps--;
-      state = this.states.pop();
+
+
+  // kind of observer pattern for notifying observers when a certain event occurs...
+  class EventEmitter{
+    constructor(){
+      this._emitters = new Map();
     }
-    return state;
+    emit(channel, data){
+      if(!this._emitters.has(channel)) return console.log('Nobody Lisetening, silently ignoring...', channel, data);
+      this._emitters.get(channel).forEach(fn => fn(data));
+    }
+    addListener(channel, listener){
+      if(!this._emitters.has(channel))  this._emitters.set(channel, []);
+      this._emitters.get(channel).push(listener);
+    }
+    removeListeners(channel){
+      this._emitters.delete(channel);
+    }
   }
-  save(state){
-    this.states.push(state);
-    if(this.states.length>this.maxStates)
-      this.states.shift();
+
+  // for holding previous states to return to when new state doesn't work out.
+  class Memento{
+    constructor(maxStates=10){
+      this.states = [];
+      this.maxStates = maxStates;
+    }
+    getState(steps=1){
+      let state;
+      while(steps && this.states.length){
+        steps--;
+        state = this.states.pop();
+      }
+      return state;
+    }
+    save(state){
+      this.states.push(state);
+      if(this.states.length>this.maxStates)
+        this.states.shift();
+    }
   }
-}
+
+  return {
+    getRandom,
+    EventEmitter,
+    Memento
+  };
+})();
 
 // The controller object that holds all the game logic and models within, extends EventEmitter to notify the view when change occurs
-class Board extends EventEmitter{
+class Board extends Utils.EventEmitter{
   constructor(height=15, width=10){
     super();
     this.height = height;
     this.width = width;
-    let table = [];
-    for(let i=0;i<length;i++){
-      table[i]=[];
-      for(let j=0;j<width;j++)
-        table[i].push(0);
-    }
     this.gameOver = false;  // boolean flag indicating the game status
     this.mobile = null;     // the piece moving on the table
-    this.fixed =  new FixedPiece(table);  // object holding coordinated of the uncleared blocks.
+    this.fixed =  new FixedPiece(height, width);  // object holding coordinated of the uncleared blocks.
     this.getNextPiece();
     this.moveInterval = setInterval(this.movePieceDown.bind(this), Config.moveIntervalTime);
   }
@@ -102,7 +115,7 @@ class Board extends EventEmitter{
     if(this.fixed.spaceConflict(this.mobile)){
       this.mobile.undo();
       this.getNextPiece();
-    }else if(this.mobile.y-this.mobile.height == 0){ // the mobile piece has reached the bottom of the floor.
+    }else if(this.mobile.y+1-this.mobile.height== 0){ // the mobile piece has reached the bottom of the floor.
       this.getNextPiece();
     }
   }
@@ -129,12 +142,12 @@ class Board extends EventEmitter{
     }
     try{
       if(this.mobile){
+        if(this.mobile.y>=this.height)  return finish();
         this.fixed.addPiece(this.mobile);
         this.mobile = null;
         if(this.fixed.peak >= this.height)  return finish();
       }
     }catch(e){
-      console.error('caught error: ', e);
       return this.finish();
     }
     if(!this.nextPiece)  this.nextPiece = MobilePieceFactory.getPiece(this.height, this.width);
@@ -150,21 +163,23 @@ class Board extends EventEmitter{
     this.emit('game over', this.fixed.score);
   }
   getViewCoords(){
-    let coords = this.fixed.coords(),
-      x = piece.x,
-      y = piece.y,
-      mobileCoords = this.mobile.coords,
+    let viewCoords,
+      x = this.mobile.x,
+      y = this.mobile.y,  
+      coords = this.mobile.coords,
       height = this.mobile.height,
       width = this.mobile.width;
+    viewCoords = this.fixed.coords.map(ele => ele.slice(0)); // cloning array of arrays
     for(let i=0;i<height;i++)
       for(let j=0;j<width;j++)
-        coords[x-i][y+j] = coords[i][j] + mobileCoords[x-i][y+j]*2;
-    return coords;
+        if(viewCoords[y-i])
+        viewCoords[y-i][x+j] = coords[i][j]*2;
+    return viewCoords.reverse();
   }
 }
 
 // Super class containing common features of a block
-class Piece extends Memento{
+class Piece extends Utils.Memento{
   constructor(coords){
     if(!coords) throw new Error('Co-ords Array Missing!!!');
     super();
@@ -228,52 +243,20 @@ class MobilePiece extends Piece{
   isConflict(){
     let conflict = false; 
     if( this.x < 0 || (this.x + this.width )>= this.tableWidth )  conflict=true;
-    if( (this.y - this.height) < 0 )  conflict=true;
+    if( (this.y - this.height + 1) < 0 )  conflict=true;
     if(conflict)  this.undo();
   }
 }
 
-function Utils(){
-
-
-  // various block options to choose the random block from.
-  let coordOptions = Config.coordOptions;
-
-  // method that return random number, with ceil+1 passed as 'max' parameter
-  function getRandom(max) {
-    if(!max)  throw new Error('Param Missing');
-    let num = Math.floor(max*Math.random());
-    if(num==max)  num--;
-    return num;
-  }
-
-  // Factory for creating random mobile block.
-  function MobilePieceFactory(tableWidth, tableHeight){
-    if(!tableHeight || !tableWidth) throw new Error('Params Missing!!!');
-    let coords = coordOptions[getRandom(coordOptions.length)],
-      piece = new MobilePiece({
-        coords,
-        tableWidth,
-        tableHeight
-      }),
-      turnCount = getRandom(4);
-    while(turnCount){
-      turnCount--;
-      piece.turn();
-    }
-    return piece;
-  }
-
-
-  return {
-    getRandom,
-    coordOptions,
-    MobilePieceFactory
-  };
-}
-
+// the model holding all the co-ordinates of fixed/immovable pieces, also methods for checking if there are any overlapping pieces. 
 class FixedPiece extends Piece{
-  constructor(coords){
+  constructor(height, width){
+    let coords = [];
+    for(let i=0;i<height;i++){
+      coords[i]=[];
+      for(let j=0;j<width;j++)
+        coords[i].push(0);
+    }
     super(coords);
     this.score = 0;
   }
@@ -290,7 +273,8 @@ class FixedPiece extends Piece{
     let x = piece.x, y = piece.y, coords = piece.coords;
     for(let i=0;i<piece.height;i++)
       for(let j=0;j<piece.width;j++)
-        this.coords[x-i][y+j] = coords[i][j] + this.coords[x-i][y+j];
+        if(this.coords[y-i])
+          this.coords[y-i][x+j] = coords[i][j] + this.coords[y-i][x+j];
     this.clearFilled();
   }
   clearFilled(){
@@ -311,8 +295,31 @@ class FixedPiece extends Piece{
     let conflict = false, x = piece.x, y = piece.y, coords = piece.coords;
     for(let i=0;i<piece.height;i++)
       for(let j=0;j<piece.width;j++)
-        if(coords[i][j] && this.coords[x-i][y+j])
+        if(coords[i][j] && this.coords[y-i] && this.coords[y-i][x+j])
           return true;    
     return conflict;
   }
+} 
+
+// Factory for creating random mobile block.
+class MobilePieceFactory{
+  static getPiece(tableHeight, tableWidth){
+    if(!tableHeight || !tableWidth) throw new Error('Params Missing!!!');
+    
+    let coordOptions = Config.coordOptions,   // various block options to choose the random block from.
+      coords = coordOptions[Utils.getRandom(coordOptions.length)],
+      piece = new MobilePiece({
+        coords,
+        tableWidth,
+        tableHeight
+      }),
+      turnCount = Utils.getRandom(4);
+    while(turnCount){
+      turnCount--;
+      piece.turn();
+    }
+    return piece;
+  }
 }
+
+window.b = new Board();
