@@ -15,6 +15,21 @@ var exec = {}
         presets: ['es2015']
       }
     }
+ , browserify = {
+    options: {
+      transform: ["babelify"]
+    }
+  }, mochaTest = {
+    spec: {
+      options: {
+        require: ['should'],
+        reporter: 'spec',
+        ui: 'bdd',
+        colors: true
+      },
+      src: ['test/**/*.js']
+    }    
+  }
 ;
 
 /* for jade to html  */    
@@ -47,7 +62,6 @@ watch.grunt = {
     destES6 = 'dist/app.es6.js',
     destES5 = 'dist/app.js',
     es6SrcList = [
-      'class.js',
       'app.js',
       'controllers.js',
       'directives.js'
@@ -66,6 +80,23 @@ watch.grunt = {
                 tasks: es6Tasks
   };  
 /* for es6 to es5 */  
+
+/* Browserify */    
+
+  browserify.tetris = {
+    files: {
+      'dist/tetris.js': 'client/js/tetris/tetris.js'
+    },
+    options: {
+      browserifyOptions: {standalone: 'Tetris'}
+    }
+  };
+  startTasks.push(startTasks, 'browserify:tetris');
+  watch.browserifyTetris =  {
+                files: 'client/js/tetris/**',
+                tasks: ['browserify:tetris']
+  };  
+/* Browserify */  
 
 /** for copying images and other static stuff*/
 copy.static = {
@@ -150,6 +181,7 @@ module.exports = grunt => {
   require('load-grunt-tasks')(grunt);
   grunt.initConfig({
     nodemon,
+    browserify,
     concurrent,
     watch,
     sass,
@@ -157,8 +189,10 @@ module.exports = grunt => {
     concat,
     exec,
     copy,
-    jade
+    jade,
+    mochaTest
   });           
   grunt.registerTask('default', startTasks);
   grunt.registerTask('dev', startTasks);
+  grunt.registerTask('test', 'mochaTest:spec');
 };
