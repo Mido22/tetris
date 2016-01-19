@@ -1,8 +1,41 @@
 extends layout
 
 block content
-  div(ng-app='theModule' ng-controller='mainCtrl')
-    h1 Tetris Game - Classic Mode
+  h1 Tetris Game - Classic Mode
+  div.app-area(ng-app='theModule' ng-controller='mainCtrl')
+    div.app-header
+      div.board-details-area
+        div.pull-right
+          h5 Board Details
+          div
+            span Height: 
+            span(ng-bind='boardHeight')
+          div
+            span Width: 
+            span(ng-bind='boardWidth')
+
+    div.app-body
+      h1(ng-show='tetris.status=="yetToStart"') Press Enter to Start New Game
+      div(ng-hide='tetris.status=="yetToStart"')
+        h5 Score: {{tetris.board.score}}
+        h4(ng-show='tetris.status=="stopped"') Game Over, Press enter to start new game...
+        div.display-table
+          div.display-row(ng-repeat='row in coords track by $index')
+            span.display-cell.cell(ng-repeat='datum in row track by $index')
+              span(ng-bind='datum')
+
+
+    div.app-footer
+      h5 Hints
+      h6 Press Enter To Start Game
+      h6 Increase/ Decrease board height: Arrow Up / Arrow Down Key
+      h6 Increase/ Decrease board width: Arrow Right / Arrow Left Key
+      h6 (Once Game Starts)
+      h6 Arrow Up - Rotate a piece
+      h6 Arrow Down - Move piece down
+      h6 Arrow Left - Move piece left
+      h6 Arrow Right - Move piece right
+
 
 
   

@@ -51,7 +51,7 @@ class MobilePiece extends Piece{
   }
   isConflict(){
     let conflict = false; 
-    if( this.x < 0 || (this.x + this.width )>= this.tableWidth )  conflict=true;
+    if( this.x < 0 || (this.x + this.width )> this.tableWidth )  conflict=true;
     if( (this.y - this.height + 1) < 0 )  conflict=true;
     if(conflict)  this.undo();
   }

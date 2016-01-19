@@ -91,7 +91,7 @@ watch.grunt = {
       browserifyOptions: {standalone: 'Tetris'}
     }
   };
-  startTasks.push(startTasks, 'browserify:tetris');
+  startTasks.push('browserify:tetris');
   watch.browserifyTetris =  {
                 files: 'client/js/tetris/**',
                 tasks: ['browserify:tetris']

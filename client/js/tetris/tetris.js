@@ -6,18 +6,22 @@ let Config = require('./config'),
 
 // The controller object that holds all the game logic and models within, extends EventEmitter to notify the view when change occurs
 class Tetris extends Utils.EventEmitter{
-  constructor(height=15, width=10){
+  constructor(){
     super();
+    this.status = 'yetToStart'; // flag indicating the game status( yetToStart, started, stopped)
+  }
+  startNewGame(height, width){
+    if(!height || !width) throw new Error('Params Missing');
+    this.status = 'started';
     this.height = height;
     this.width = width;
-    this.gameOver = false;  // boolean flag indicating the game status
     this.mobile = null;     // the piece moving on the table
     this.board =  new Board(height, width);  // object holding coordinated of the uncleared blocks.
     this.getNextPiece();
     this.moveInterval = setInterval(this.movePieceDown.bind(this), Config.moveIntervalTime);
   }
   movePieceDown(){
-    if(this.gameOver){
+    if(this.status == 'stopped'){
       if(this.moveInterval) clearInterval(this.moveInterval);
       if(!this._finishCalled) finish();
       return; 
@@ -28,6 +32,8 @@ class Tetris extends Utils.EventEmitter{
       this.getNextPiece();
     }else if(this.mobile.y+1-this.mobile.height== 0){ // the mobile piece has reached the bottom of the floor.
       this.getNextPiece();
+    }else{
+      this.emit('update UI');
     }
   }
   movePieceLeft(){
@@ -47,7 +53,7 @@ class Tetris extends Utils.EventEmitter{
       this.mobile.undo();
   }
   getNextPiece(){
-    if(this.gameOver){
+    if(this.status == 'stopped'){
       if(!this._finishCalled) finish();
       return;
     }
@@ -69,11 +75,12 @@ class Tetris extends Utils.EventEmitter{
     this.emit('update UI');
   }
   finish(){
-    this.gameOver = true;
+    this.status = 'stopped';
     this._finishCalled = true;
     this.emit('game over', this.board.score);
   }
   getViewCoords(){
+    if(!this.mobile)  return;
     let viewCoords,
       x = this.mobile.x,
       y = this.mobile.y,  
