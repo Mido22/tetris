@@ -3,6 +3,8 @@
 Like the name says, this is a Tetris Game, built using Angular and ES6.
 
 ### How to Play
+
+either open [this link](http://mido22.github.io/tetris/) in new tab or : 
   
  * Download the project and extract it.
  * Open the `prod/index.html` file in either Firefox or chrome.
