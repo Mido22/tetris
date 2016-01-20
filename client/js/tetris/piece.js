@@ -1,8 +1,8 @@
 'use strict';
-// Super class containing common features of a block
 
 let Utils = require('./utils');
 
+// Super class containing common features of a block
 class Piece extends Utils.Memento{
   constructor(coords){
     if(!coords) throw new Error('Co-ords Array Missing!!!');

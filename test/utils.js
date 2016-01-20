@@ -70,9 +70,9 @@ describe('Tetris - utils.js',  () => {
       obj.emit('dummy channel', message);
     });
 
-    it('no error is thrown even when there are no listeners', () => {
+    it('error is thrown even when there are no listeners', () => {
       let obj = new Utils.EventEmitter();
-      (() => obj.emit('dummy channel', {data: 'dummy Message'})).should.not.throw();
+      (() => obj.emit('dummy channel', {data: 'dummy Message'})).should.throw();
     });
 
   });

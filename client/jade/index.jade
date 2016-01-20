@@ -19,22 +19,38 @@ block content
       div(ng-hide='tetris.status=="yetToStart"')
         h5 Score: {{tetris.board.score}}
         h4(ng-show='tetris.status=="stopped"') Game Over, Press enter to start new game...
-        div.display-table
-          div.display-row(ng-repeat='row in coords track by $index')
-            span.display-cell.cell(ng-repeat='datum in row track by $index')
-              span(ng-bind='datum')
-
+        div.on-started(ng-show='tetris.status=="started"')
+          div.display-table
+            div.display-row(ng-repeat='row in coords track by $index')
+              div.display-cell.cell(ng-repeat='datum in row track by $index'  ng-class='{"black":datum==0, "grey": datum==1, "red": datum==2}' )
+                
 
     div.app-footer
       h5 Hints
       h6 Press Enter To Start Game
-      h6 Increase/ Decrease board height: Arrow Up / Arrow Down Key
-      h6 Increase/ Decrease board width: Arrow Right / Arrow Left Key
-      h6 (Once Game Starts)
-      h6 Arrow Up - Rotate a piece
-      h6 Arrow Down - Move piece down
-      h6 Arrow Left - Move piece left
-      h6 Arrow Right - Move piece right
+      h6 
+        span Increase / Decrease board height: 
+        span.maUp.maKey
+        span /
+        span.maDown.maKey
+      h6 
+        span Increase / Decrease board width: 
+        span.maRight.maKey
+        span /
+        span.maLeft.maKey
+      h6 (... and Once Game Starts)
+      h6 
+        span.maUp.maKey
+        span - Rotate a piece
+      h6 
+        span.maDown.maKey
+        span - Move piece down
+      h6
+        span.maLeft.maKey
+        span  - Move piece left
+      h6
+        span.maRight.maKey
+        span - Move piece right
 
 
 

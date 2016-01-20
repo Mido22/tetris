@@ -1,3 +1,4 @@
+'use strict';
 
 let Config = require('./config'),
     Utils = require('./utils'),
@@ -10,6 +11,7 @@ class Tetris extends Utils.EventEmitter{
     super();
     this.status = 'yetToStart'; // flag indicating the game status( yetToStart, started, stopped)
   }
+  // method for starting new tetris game, we prodide the table dimensions as parameters to the method
   startNewGame(height, width){
     if(!height || !width) throw new Error('Params Missing');
     this.status = 'started';
@@ -20,6 +22,7 @@ class Tetris extends Utils.EventEmitter{
     this.getNextPiece();
     this.moveInterval = setInterval(this.movePieceDown.bind(this), Config.moveIntervalTime);
   }
+  // move the mobile piece one row down (if possible)
   movePieceDown(){
     if(this.status == 'stopped'){
       if(this.moveInterval) clearInterval(this.moveInterval);
@@ -36,22 +39,27 @@ class Tetris extends Utils.EventEmitter{
       this.emit('update UI');
     }
   }
+  // move the mobile piece one column left (if possible)
   movePieceLeft(){
     this.mobile.left();
     this.undoIfConflict();
   }
+  // move the mobile piece one column right (if possible)
   movePieceRight(){
     this.mobile.right();
     this.undoIfConflict();
   }
+  // rotate the mobile piece 90 degree clockwise (if possible)
   rotatePiece(){
     this.mobile.turn();
     this.undoIfConflict();
   }
+  // restore previous state of mobile piece if current state overlaps with table wall or fixed blocks
   undoIfConflict(){
     if(this.board.spaceConflict(this.mobile))
       this.mobile.undo();
   }
+  // method for retriving next random mobile block also for checking if the game has finished.
   getNextPiece(){
     if(this.status == 'stopped'){
       if(!this._finishCalled) finish();
@@ -74,11 +82,13 @@ class Tetris extends Utils.EventEmitter{
       return this.finish();
     this.emit('update UI');
   }
+  // method to signal view tha the game has finished.
   finish(){
+    if(this.status != 'stopped') this.emit('game over', this.board.score);
     this.status = 'stopped';
-    this._finishCalled = true;
-    this.emit('game over', this.board.score);
+    this._finishCalled = true;    
   }
+  // method to retrieve table details(  fixed blocks as 1 and mobile blocks as 2) to be displayed to the user.
   getViewCoords(){
     if(!this.mobile)  return;
     let viewCoords,

@@ -15,7 +15,7 @@ class EventEmitter{
     this._emitters = new Map();
   }
   emit(channel, data){
-    if(!this._emitters.has(channel)) return console.log('Nobody Lisetening, silently ignoring...', channel, data);
+    if(!this._emitters.has(channel)) throw new Error('But nobody is listening!!!');
     this._emitters.get(channel).forEach(fn => fn(data));
   }
   addListener(channel, listener){

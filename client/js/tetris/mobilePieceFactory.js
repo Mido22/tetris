@@ -6,8 +6,7 @@ let Config = require('./config'),
     // various block options to choose the random block from.
     coordOptions = Config.coordOptions;
 
-
-// Factory for creating random mobile block.
+// method for creating random mobile block.
 function getPiece(tableHeight, tableWidth){
   if(!tableHeight || !tableWidth) throw new Error('Params Missing!!!');
   
@@ -25,6 +24,7 @@ function getPiece(tableHeight, tableWidth){
   return piece;
 }
 
+// Factory for creating random mobile block.
 module.exports = {
   getPiece
 };
