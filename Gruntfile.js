@@ -63,8 +63,7 @@ watch.grunt = {
     destES5 = 'dist/app.js',
     es6SrcList = [
       'app.js',
-      'controllers.js',
-      'directives.js'
+      'controllers.js'
     ],
     es6Files = {}, 
     es6to5Files = {};

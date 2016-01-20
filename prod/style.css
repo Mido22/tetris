@@ -1,0 +1,83 @@
+@font-face {
+  font-family: "Arcade";
+  src: url("arcade.ttf"); }
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; }
+
+body {
+  background-color: black;
+  background-attachment: fixed; }
+
+.app-area {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 70px); }
+  .app-area .app-header {
+    min-height: 100px;
+    order: 1; }
+  .app-area .app-footer {
+    min-height: 230px;
+    order: 3; }
+  .app-area .app-body {
+    flex-grow: 1;
+    min-height: calc(100% - 400px);
+    order: 2; }
+
+.maKey {
+  padding: 3px;
+  font-size: 20px; }
+
+.maUp:after {
+  content: "\2191"; }
+
+.maLeft:after {
+  content: "\2190"; }
+
+.maRight:after {
+  content: "\2192"; }
+
+.maDown:after {
+  content: "\2193"; }
+
+.on-started {
+  display: flex;
+  flex-flow: center;
+  justify-content: center;
+  align-items: center;
+  align-content: center; }
+
+.display-table {
+  align-self: center;
+  border: 1px solid; }
+
+.display-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: no-wrap; }
+
+.display-cell {
+  height: 30px;
+  width: 30px;
+  margin: 1px; }
+
+.display-cell.black {
+  background-color: black; }
+
+.display-cell.red {
+  background-color: red; }
+
+.display-cell.grey {
+  background-color: gray; }
+
+.page-wrap {
+  font-family: 'Arcade', sans-serif;
+  width: 90%;
+  max-width: 960px;
+  margin: 0px auto;
+  position: relative;
+  background-color: black; }
+
+/*# sourceMappingURL=style.css.map */

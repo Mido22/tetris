@@ -1,11 +1,18 @@
 {
   "name": "tetris",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "grunt dev",
     "test": "grunt test"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mido22/tetris.git"
+  },
+  "keywords": [
+    "es6", "angular", "game", "grunt"
+  ],
   "devDependencies": {
     "babel": "^6.3.26",
     "babel-preset-es2015": "^6.3.13",

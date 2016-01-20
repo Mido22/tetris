@@ -5,6 +5,18 @@
 // move piece down every 300ms
 module.exports.moveIntervalTime = 300;
 
+// Tetris board size range...
+module.exports.range= {
+  height:{
+    min: 10,
+    max:21
+  },
+  width:{
+    min: 10,
+    max: 21
+  }
+}
+
 // various block options to choose the random block from.
 module.exports.coordOptions = [       
 // square block

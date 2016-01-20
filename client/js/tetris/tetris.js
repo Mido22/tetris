@@ -26,7 +26,7 @@ class Tetris extends Utils.EventEmitter{
   movePieceDown(){
     if(this.status == 'stopped'){
       if(this.moveInterval) clearInterval(this.moveInterval);
-      if(!this._finishCalled) finish();
+      if(!this._finishCalled) this.finish();
       return; 
     }
     this.mobile.down();
@@ -62,15 +62,15 @@ class Tetris extends Utils.EventEmitter{
   // method for retriving next random mobile block also for checking if the game has finished.
   getNextPiece(){
     if(this.status == 'stopped'){
-      if(!this._finishCalled) finish();
+      if(!this._finishCalled) this.finish();
       return;
     }
     try{
       if(this.mobile){
-        if(this.mobile.y>=this.height)  return finish();
+        if(this.mobile.y>=this.height)  return this.finish();
         this.board.addPiece(this.mobile);
         this.mobile = null;
-        if(this.board.peak >= this.height)  return finish();
+        if(this.board.peak >= this.height)  return this.finish();
       }
     }catch(e){
       return this.finish();
@@ -84,9 +84,9 @@ class Tetris extends Utils.EventEmitter{
   }
   // method to signal view tha the game has finished.
   finish(){
-    if(this.status != 'stopped') this.emit('game over', this.board.score);
     this.status = 'stopped';
     this._finishCalled = true;    
+    this.emit('game over', this.board.score);
   }
   // method to retrieve table details(  fixed blocks as 1 and mobile blocks as 2) to be displayed to the user.
   getViewCoords(){
@@ -100,8 +100,8 @@ class Tetris extends Utils.EventEmitter{
     viewCoords = this.board.coords.map(ele => ele.slice(0)); // cloning array of arrays
     for(let i=0;i<height;i++)
       for(let j=0;j<width;j++)
-        if(viewCoords[y-i])
-        viewCoords[y-i][x+j] = coords[i][j]*2;
+        if(viewCoords[y-i] && (viewCoords[y-i][x+j]==0 || viewCoords[y-i][x+j]))
+          viewCoords[y-i][x+j] = viewCoords[y-i][x+j] + coords[i][j]*2;
     return viewCoords.reverse();
   }
 }

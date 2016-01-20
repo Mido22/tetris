@@ -7,12 +7,13 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
   function onKeyPress(event){
     if(!$scope.tetris || !$scope.tetris.status)  return;
 
-    switch(event.key){
-      case 'ArrowUp': onArrowUp(); break;
-      case 'ArrowDown': onArrowDown(); break;
-      case 'ArrowLeft': onArrowLeft(); break;
-      case 'ArrowRight': onArrowRight(); break;
-      case 'Enter': startNewGame(); break;
+    switch(event.which){
+      case 38: onArrowUp(); break;
+      case 40: onArrowDown(); break;
+      case 37: onArrowLeft(); break;
+      case 39: onArrowRight(); break;
+      case 13: startNewGame(); break;
+      case 72: $scope.showHints = !$scope.showHints; break;
     }
     updateUI();
   }
@@ -22,7 +23,7 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
       $scope.tetris.rotatePiece();
     else
       $scope.boardHeight++;
-    if($scope.boardHeight>31) $scope.boardHeight = 31;
+    if($scope.boardHeight>21) $scope.boardHeight = 21;
   }
 
   function onArrowDown(){
@@ -30,7 +31,7 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
       $scope.tetris.movePieceDown();
     else
       $scope.boardHeight--;
-    if($scope.boardHeight<9) $scope.boardHeight = 9;
+    if($scope.boardHeight<11) $scope.boardHeight = 11;
   }
 
   function onArrowRight(){
@@ -38,7 +39,7 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
       $scope.tetris.movePieceRight();
     else
       $scope.boardWidth++;
-    if($scope.boardWidth>15) $scope.boardWidth = 15;
+    if($scope.boardWidth>21) $scope.boardWidth = 21;
   }
 
   function onArrowLeft(){
@@ -46,7 +47,7 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
       $scope.tetris.movePieceLeft();
     else
       $scope.boardWidth--;
-    if($scope.boardWidth<6) $scope.boardWidth = 6;
+    if($scope.boardWidth<11) $scope.boardWidth = 11;
   }
 
   function startNewGame(){
@@ -57,18 +58,24 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
   function init(){
     let tetris = new Tetris();
     tetris.addListener('update UI', updateUI);
-    tetris.addListener('game over', updateUI);
+    tetris.addListener('game over', ()=>{
+      setTimeout(updateUI, 100); // keeping a delay not to clash with the other update UI;
+    });
     $scope.tetris = tetris;   
     $scope.boardHeight = 15;
     $scope.boardWidth = 10;
-    $document.on('keypress', onKeyPress) ;
+    $document.on('keydown', onKeyPress);
+    $scope.showHints = true;
   }  
 
   function updateUI(){ 
     var phase = $scope.$root.$$phase;
     if(phase !== '$apply' && phase !== '$digest') {
       $scope.coords = $scope.tetris.getViewCoords();
-      try{$scope.$apply();}catch(e){}
+      try{
+        $scope.uiUpdateWaiting = false;
+        $scope.$apply();
+      }catch(e){console.log('error caught: ', e);}
     }else{
       delayUIUpdate();
     }  
@@ -78,8 +85,8 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
     if($scope.uiUpdateWaiting)  return;    
     $scope.uiUpdateWaiting = true;
     setTimeout(() => {
-      updateUI();
       $scope.uiUpdateWaiting = false;
+      updateUI();
     }, 100);
   } 
 

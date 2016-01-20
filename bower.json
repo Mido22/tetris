@@ -1,6 +1,6 @@
 {
   "name": "tetris",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "ignore": [],
   "dependencies": {
     "angular": "~1.4.8",
