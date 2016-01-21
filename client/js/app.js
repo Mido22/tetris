@@ -7,8 +7,6 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
   
   function onKeyPress(event){
     if(!$scope.tetris || !$scope.tetris.status)  return;
-
-    console.log(event.key, event.which);
     switch(event.which){
       case 87: 
       case 38: onArrowUp(); break;
@@ -82,7 +80,7 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document'
       try{
         $scope.uiUpdateWaiting = false;
         $scope.$apply();
-      }catch(e){console.log('error caught: ', e);}
+      }catch(e){}
     }else{
       delayUIUpdate();
     }  
