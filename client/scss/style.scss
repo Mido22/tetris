@@ -1,6 +1,6 @@
 @font-face {
   font-family:"Arcade";
-  src: url("../static/arcade.ttf") ;
+  src: url("arcade.ttf") ;
 }
 
 html, body{
@@ -87,4 +87,13 @@ body{
   margin: 0px auto;
   position: relative;
   background-color: black;
+}
+
+.hint-area{
+  display: flex;
+}
+
+.hint-area h6{
+  height: 28px;
+  margin: 3px;
 }

@@ -80,4 +80,11 @@ body {
   position: relative;
   background-color: black; }
 
+.hint-area {
+  display: flex; }
+
+.hint-area h6 {
+  height: 28px;
+  margin: 3px; }
+
 /*# sourceMappingURL=style.css.map */

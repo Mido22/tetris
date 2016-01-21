@@ -1,6 +1,6 @@
 'use strict';
 
-var theModule = angular.module('theModule', ['ui.bootstrap']).value('partialsDir', 'html/partials/');
+var theModule = angular.module('theModule', ['ui.bootstrap']);
 
 theModule.controller('mainCtrl', ['$scope', '$timeout', '$document', function ($scope, $timeout, $document) {
   window.s = $scope; // for Debug, remove THIS.
@@ -8,15 +8,21 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document', function ($
   function onKeyPress(event) {
     if (!$scope.tetris || !$scope.tetris.status) return;
 
+    console.log(event.key, event.which);
     switch (event.which) {
+      case 87:
       case 38:
         onArrowUp();break;
+      case 83:
       case 40:
         onArrowDown();break;
+      case 65:
       case 37:
         onArrowLeft();break;
+      case 68:
       case 39:
         onArrowRight();break;
+      case 69:
       case 13:
         startNewGame();break;
       case 72:
@@ -57,8 +63,8 @@ theModule.controller('mainCtrl', ['$scope', '$timeout', '$document', function ($
       setTimeout(updateUI, 100); // keeping a delay not to clash with the other update UI;
     });
     $scope.tetris = tetris;
-    $scope.boardHeight = 15;
-    $scope.boardWidth = 10;
+    $scope.boardHeight = 16;
+    $scope.boardWidth = 16;
     $document.on('keydown', onKeyPress);
     $scope.showHints = true;
   }

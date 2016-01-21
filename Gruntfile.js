@@ -38,7 +38,7 @@ jade.html= {
   src: ['**/*.jade', '!layout.jade'], 
   cwd: 'client/jade',
   ext : '.html',
-  dest: 'dist/html/'
+  dest: '.'
 };  
 watch.jade = {
   tasks: ['jade:html'],
@@ -58,24 +58,13 @@ watch.grunt = {
 
 
 /* for es6 to es5 */    
-  var es6SrcFolder = 'client/js/',
-    destES6 = 'dist/app.es6.js',
-    destES5 = 'dist/app.js',
-    es6SrcList = [
-      'app.js',
-      'controllers.js'
-    ],
-    es6Files = {}, 
-    es6to5Files = {};
-  es6to5Files[destES5] = destES6;
-  
-  es6Files[destES6] = es6SrcList.map(v=> es6SrcFolder + v);
-  concat.es6 = { files: es6Files };
-  babel.es6 = { files: es6to5Files};
-  var es6Tasks = ['concat:es6', 'babel:es6'];
+  babel.es6 = { files: {
+    'prod/app.js': 'client/js/app.js'
+  }};
+  var es6Tasks = ['babel:es6'];
   startTasks.push.apply(startTasks, es6Tasks);
   watch.es6 =  {
-                files: es6SrcFolder + '**',
+                files: 'client/js/app.js',
                 tasks: es6Tasks
   };  
 /* for es6 to es5 */  
@@ -84,7 +73,7 @@ watch.grunt = {
 
   browserify.tetris = {
     files: {
-      'dist/tetris.js': 'client/js/tetris/tetris.js'
+      'prod/tetris.js': 'client/js/tetris/tetris.js'
     },
     options: {
       browserifyOptions: {standalone: 'Tetris'}
@@ -101,20 +90,11 @@ watch.grunt = {
 copy.static = {
   expand: true,
   src: 'client/static/**',
-  dest: 'dist/static/',
+  dest: 'prod/',
   filter:'isFile',
   flatten: true
 };
 /** for copying images and other static stuff end*/
-
-/* for Bower  */    
-exec.bower= {
-  command: 'bower install --allow-root'
-};  
-concurrent.bower = {
-  tasks: ['exec:bower']
-};
-/* for bower end */  
 
 /* for npm start and for monitoring the js files for change and restarting server*/
 
@@ -140,7 +120,7 @@ sass.scss = {
     expand: true,
     cwd: 'client/scss',
     src: ['*.scss'],
-    dest: 'dist/css',
+    dest: 'prod',
     ext: '.css'
   }]
 };
@@ -161,7 +141,7 @@ watch.reload = {
 
 
 
-concurrentTasks.push.apply(concurrentTasks, ['concurrent:bower', 'concurrent:nodemon']);
+concurrentTasks.push.apply(concurrentTasks, ['concurrent:nodemon']);
 watchAll = Object.keys(watch).map(v => 'watch:'+v); 
 concurrentTasks.push.apply(concurrentTasks, watchAll); 
 startTasks.push('copy:static');  

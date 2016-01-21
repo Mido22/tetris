@@ -7,7 +7,7 @@ Like the name says, this is a Tetris Game, built using Angular and ES6.
 either open [this link](http://mido22.github.io/tetris/) in new tab or : 
   
  * Download the project and extract it.
- * Open the `prod/index.html` file in either Firefox or chrome.
+ * Open the `index.html` file in either Firefox or chrome.
  * Press Enter key to start game. Also hints can be found on the bottom of the page( can be turned off by pressing 'h' key)
 
 ### Dependencies

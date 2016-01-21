@@ -6,13 +6,7 @@ block content
     div.app-header
       div.board-details-area
         div.pull-right
-          h5 Board Details
-          div
-            span Height: 
-            span(ng-bind='boardHeight')
-          div
-            span Width: 
-            span(ng-bind='boardWidth')
+          h5 Board Dimension - {{boardHeight}} x {{boardWidth}}
           h4(ng-hide='tetris.status=="yetToStart"')
             span Your Score: 
             span(ng-bind='tetris.board.score')
@@ -28,31 +22,39 @@ block content
 
     div.app-footer(ng-show='showHints')
       h5 Hints
-      h6 Press Enter To Start Game
-      h6 
-        span.maUp.maKey
-        span /
-        span.maDown.maKey
-        span - Increase / Decrease board height 
-      h6 
-        span.maRight.maKey
-        span /
-        span.maLeft.maKey
-        span  - Increase / Decrease board width
-      h6 (... and Once Game Starts)
-      h6 
-        span.maUp.maKey
-        span - Rotate a piece
-      h6 
-        span.maDown.maKey
-        span - Move piece down
-      h6
-        span.maLeft.maKey
-        span  - Move piece left
-      h6
-        span.maRight.maKey
-        span - Move piece right
-      h6
-        span h  
-        span &nbsp - Show / Hide hints
+      h6 ( w,a,s,d work the same as arrow keys)
+      br
+      h6 control buttons:
+      div.hint-area  
+        div.col1 
+          h6 Enter 
+          h6 
+            span.maUp.maKey
+            span ,
+            span.maDown.maKey
+          h6 
+            span.maLeft.maKey
+            span ,
+            span.maRight.maKey
+          h6 
+          h6 
+            span.maUp.maKey
+          h6 
+            span.maDown.maKey
+          h6
+            span.maLeft.maKey
+          h6
+            span.maRight.maKey
+          h6
+            span h  
+        div.col2
+          h6 - To Start Game
+          h6 - Increase / Decrease board height 
+          h6  - Increase / Decrease board width
+          h6 (... and Once Game Starts)
+          h6 - Rotate a piece
+          h6 - Move piece down
+          h6 - Move piece left
+          h6 - Move piece right
+          h6 - show / hide hints
 
